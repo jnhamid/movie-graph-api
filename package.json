@@ -1,0 +1,19 @@
+{
+  "name": "movie-graphAPI",
+  "version": "1.0.0",
+  "description": "Api to run operations on movie-graph",
+  "main": "src/app.ts",
+  "repository": "https://github.com/jnhamid/movie-graph-api",
+  "author": "Jaden Hamid",
+  "license": "MIT",
+  "private": true,
+  "dependencies": {
+    "@types/express": "^4.17.13",
+    "@types/node": "^17.0.28",
+    "express": "^4.18.0",
+    "typescript": "^4.6.3"
+  },
+  "devDependencies": {
+    "ts-node": "^10.7.0"
+  }
+}
