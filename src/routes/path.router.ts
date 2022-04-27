@@ -3,6 +3,7 @@
  */
 
 import express, { Request, Response } from "express";
+import { mainGraph } from "../app";
 
 /**
  * Router Definition
@@ -18,7 +19,11 @@ pathRouter.get("/", async (req: Request, res: Response) => {
   try {
     //get path
 
-    res.status(200).send();
+    const { firstActor, secondActor } = req.query;
+
+    const pathArr = mainGraph.BFS(firstActor as string, secondActor as string);
+
+    res.status(200).send(JSON.stringify([pathArr]));
   } catch (error) {
     res.status(500).send(`Something went wrong: 
         ${error}
