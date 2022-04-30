@@ -39,5 +39,6 @@ app.use("/api/path", pathRouter);
 
 app.listen(PORT, async () => {
   await mainGraph.read();
+  console.log("Read File");
   console.log(`Listening on port ${PORT}`);
 });
