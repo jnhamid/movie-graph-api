@@ -51,8 +51,8 @@ namesRouter.get("/", async (req: Request, res: Response) => {
     res.status(200).send(JSON.stringify(namesArr));
   } catch (error) {
     res.status(500).send(`Server Error Something with Wrong: 
-        ${error}
-    `);
+         ${error}
+     `);
   }
 });
 
@@ -62,11 +62,50 @@ namesRouter.get("/graph", async (req: Request, res: Response) => {
     let nodes: any[] = [];
     let links: any[] = [];
 
+    let names: string[] = [...mainGraph.graph.keys()];
+    names = names.sort(() => 0.5 - Math.random());
+
+    names.length = 3;
+
+    let nodeSet = new Set<string>(names);
+
+    for (let name of names) {
+      const actorsSet = mainGraph.graph.get(name);
+      if (actorsSet) {
+        const actorArr = [...actorsSet];
+        for (let actor of actorArr) {
+          const link = { source: name, target: actor.name };
+          if (!nodeSet.has(actor.name)) {
+            nodeSet.add(actor.name);
+          }
+          links.push(link);
+        }
+      }
+    }
+
+    nodes = [...nodeSet].map((node) => {
+      return { id: node, name: node };
+    });
+    console.log(nodes.length, links.length);
+    res.status(200).send(JSON.stringify({ nodes, links }));
+  } catch (error) {
+    res.status(500).send(`Server Error Something with Wrong: 
+         ${error}
+     `);
+  }
+});
+
+namesRouter.get("/graph2", async (req: Request, res: Response) => {
+  try {
+    //check for query parameters
+    let nodes: any[] = [];
+    let links: any[] = [];
+
     let names: string[] = [...new Set<string>([...mainGraph.graph.keys()])];
 
     names = names.sort(() => 0.5 - Math.random());
 
-    names.length = 1000;
+    names.length = 1300;
 
     nodes = names.map((name) => {
       return { id: name, name };

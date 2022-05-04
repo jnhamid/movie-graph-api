@@ -55,7 +55,7 @@ export default class Graph {
         const castArray = JSON.parse(record.cast);
         const movie_id = record.movie_id;
         for (let cast of castArray) {
-          const name = cast.name;
+          const name = cast.name.replace(/\s\s+/g, " ");
           actors.push(name);
           for (let cast2 of castArray) {
             const name2: string = cast2.name;
