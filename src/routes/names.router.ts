@@ -105,7 +105,7 @@ namesRouter.get("/graph2", async (req: Request, res: Response) => {
 
     names = names.sort(() => 0.5 - Math.random());
 
-    names.length = 1300;
+    names.length = 1500;
 
     nodes = names.map((name) => {
       return { id: name, name };
@@ -123,6 +123,40 @@ namesRouter.get("/graph2", async (req: Request, res: Response) => {
       }
     }
     console.log(links.length);
+    res.status(200).send(JSON.stringify({ nodes, links }));
+  } catch (error) {
+    res.status(500).send(`Server Error Something with Wrong: 
+        ${error}
+    `);
+  }
+});
+
+namesRouter.get("/graph3", (req: Request, res: Response) => {
+  try {
+    //check for query parameters
+    let nodes: any[] = [];
+    let links: any[] = [];
+
+    let names: string[] = [
+      ...new Set<string>([...mainGraph.smallGraph.keys()]),
+    ];
+
+    nodes = names.map((name) => {
+      return { id: name, name };
+    });
+
+    for (let name of names) {
+      const actorsSet = mainGraph.graph.get(name);
+
+      if (actorsSet) {
+        const actorArr = [...actorsSet];
+        for (let actor of actorArr) {
+          const link = { source: name, target: actor.name };
+          if (names.includes(actor.name)) links.push(link);
+        }
+      }
+    }
+    console.log(nodes.length, links.length);
     res.status(200).send(JSON.stringify({ nodes, links }));
   } catch (error) {
     res.status(500).send(`Server Error Something with Wrong: 

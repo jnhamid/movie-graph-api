@@ -18,7 +18,7 @@ export const pathRouter = express.Router();
 pathRouter.get("/", async (req: Request, res: Response) => {
   try {
     //get path
-
+    console.log(req.query.firstActor);
     const { firstActor, secondActor } = req.query;
 
     const pathArr = mainGraph.BFS(firstActor as string, secondActor as string);

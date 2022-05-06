@@ -14,32 +14,38 @@ interface actorNode {
 
 export default class Graph {
   public graph: Map<string, Set<actorNode>>;
+  public smallGraph: Map<string, Set<actorNode>>;
   // Construct Graph
   constructor() {
     this.graph = new Map<string, Set<actorNode>>();
+    this.smallGraph = new Map<string, Set<actorNode>>();
   }
 
   // Add edges
-  public addEgde(a1: string, a2: actorNode) {
+  public addEgde(
+    a1: string,
+    a2: actorNode,
+    graph: Map<string, Set<actorNode>>
+  ) {
     if (a1 === a2.name) {
       return;
     } else {
       // Get node and create link to other node
-      if (this.graph.has(a1)) {
-        this.graph.get(a1)?.add(a2);
+      if (graph.has(a1)) {
+        graph.get(a1)?.add(a2);
       } else {
         const h1 = new Set<actorNode>();
         h1.add(a2);
-        this.graph.set(a1, h1);
+        graph.set(a1, h1);
       }
-      if (this.graph.has(a2.name)) {
-        this.graph
+      if (graph.has(a2.name)) {
+        graph
           .get(a2.name)
           ?.add({ name: a1, movie_id: a2.movie_id } as actorNode);
       } else {
         const h2 = new Set<actorNode>();
         h2.add({ name: a1, movie_id: a2.movie_id } as actorNode);
-        this.graph.set(a2.name, h2);
+        graph.set(a2.name, h2);
       }
     }
   }
@@ -47,23 +53,38 @@ export default class Graph {
   public async read(): Promise<void> {
     try {
       const csvPath = path.resolve(__dirname, "../../tmdb_5000_credits.csv");
-
-      console.log(csvPath);
       const parser = fs.createReadStream(csvPath).pipe(parse());
+      let count = 0;
       for await (const record of parser) {
         const actors: string[] = [];
         const castArray = JSON.parse(record.cast);
         const movie_id = record.movie_id;
+
+        if (castArray.length < 35) count++;
         for (let cast of castArray) {
           const name = cast.name.replace(/\s\s+/g, " ");
           actors.push(name);
           for (let cast2 of castArray) {
             const name2: string = cast2.name;
             if (!(name.toLowerCase() === name2.toLowerCase())) {
-              this.addEgde(name.toLowerCase(), {
-                name: name2.toLowerCase(),
-                movie_id,
-              } as actorNode);
+              this.addEgde(
+                name.toLowerCase(),
+                {
+                  name: name2.toLowerCase(),
+                  movie_id,
+                } as actorNode,
+                this.graph
+              );
+              if (count < 5 && castArray.length < 35) {
+                this.addEgde(
+                  name.toLowerCase(),
+                  {
+                    name: name2.toLowerCase(),
+                    movie_id,
+                  } as actorNode,
+                  this.smallGraph
+                );
+              }
             }
           }
         }
@@ -76,6 +97,7 @@ export default class Graph {
   }
   // My own BFS
   public BFS(start: string, end: string): any[] {
+    console.log(start, end);
     if (!this.graph.has(start) || !this.graph.has(end)) {
       console.log("No Such Actor");
       return [];
