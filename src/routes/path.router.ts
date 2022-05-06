@@ -23,7 +23,7 @@ pathRouter.get("/", async (req: Request, res: Response) => {
 
     const pathArr = mainGraph.BFS(firstActor as string, secondActor as string);
 
-    res.status(200).send(JSON.stringify([pathArr]));
+    res.status(200).send(JSON.stringify(pathArr));
   } catch (error) {
     res.status(500).send(`Something went wrong: 
         ${error}

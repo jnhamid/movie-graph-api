@@ -162,7 +162,7 @@ export default class Graph {
           // console.log(person);
         }
       }
-      shortPathArr.push(end);
+      shortPathArr.push({ name: end });
       // console.log(end);
 
       return shortPathArr;
