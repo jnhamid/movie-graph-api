@@ -9,7 +9,7 @@ interface HashTable<T> {
 
 interface actorNode {
   name: string;
-  movie_id: string;
+  movie_id?: string;
 }
 
 export default class Graph {
@@ -54,13 +54,11 @@ export default class Graph {
     try {
       const csvPath = path.resolve(__dirname, "../../tmdb_5000_credits.csv");
       const parser = fs.createReadStream(csvPath).pipe(parse());
-      let count = 0;
       for await (const record of parser) {
         const actors: string[] = [];
         const castArray = JSON.parse(record.cast);
         const movie_id = record.movie_id;
 
-        if (castArray.length < 35) count++;
         for (let cast of castArray) {
           const name = cast.name.replace(/\s\s+/g, " ");
           actors.push(name);
@@ -75,16 +73,6 @@ export default class Graph {
                 } as actorNode,
                 this.graph
               );
-              if (count < 5 && castArray.length < 35) {
-                this.addEgde(
-                  name.toLowerCase(),
-                  {
-                    name: name2.toLowerCase(),
-                    movie_id,
-                  } as actorNode,
-                  this.smallGraph
-                );
-              }
             }
           }
         }
