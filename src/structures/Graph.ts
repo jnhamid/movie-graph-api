@@ -14,11 +14,9 @@ interface actorNode {
 
 export default class Graph {
   public graph: Map<string, Set<actorNode>>;
-  public smallGraph: Map<string, Set<actorNode>>;
   // Construct Graph
   constructor() {
     this.graph = new Map<string, Set<actorNode>>();
-    this.smallGraph = new Map<string, Set<actorNode>>();
   }
 
   // Add edges
